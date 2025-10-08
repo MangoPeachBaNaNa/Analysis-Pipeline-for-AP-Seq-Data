@@ -2,7 +2,7 @@
 :Author: Naici_G
 :Date: 1 Oct 2025
 
-:Description: Trim adapters from combined fastq files.
+:Description: Trim adapters from combined fastq files using fastp.
 """
 # import modules
 from ruffus import *
