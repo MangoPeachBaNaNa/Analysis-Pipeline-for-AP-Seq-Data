@@ -40,6 +40,8 @@ def bw_to_log2ratio(infile, outfile):
                 --operation log2 """
     P.run(statement, job_memory="4G", job_threads=threads)
 
+# make individual matrix - it is not necesasary to run this if you only want the group matrix
+"""
 @follows(bw_to_log2ratio)
 @transform("*_log2ratio.bw",
            suffix("_log2ratio.bw"),
@@ -49,7 +51,7 @@ def bw_to_log2ratio(infile, outfile):
 def compute_matrix(infile, outfiles):
     threads = 4
     outfile_matrix, outfile_name_matrix, outfile_sorted_regions = outfiles
-    statement = f"""computeMatrix reference-point \
+    statement = f'''computeMatrix reference-point \
                 --referencePoint TSS \
                 -b 3000 -a 3000 \
                 -R mm10_TSS.bed \
@@ -57,10 +59,11 @@ def compute_matrix(infile, outfiles):
                 -o {outfile_matrix} \
                 -p {threads} \
                 --outFileNameMatrix {outfile_name_matrix} \
-                --outFileSortedRegions {outfile_sorted_regions} """
+                --outFileSortedRegions {outfile_sorted_regions} '''
     P.run(statement, job_memory="4G", job_threads=threads)
-
-# make group matrix
+""" 
+# Compute matrix for all replicates combined - group matrix
+# This is for TSS +/- 3kb
 INDIVIDUAL_BW_FILES = glob.glob("*.log2ratio.bw")
 @collate(INDIVIDUAL_BW_FILES,
          regex(r".*"), 
