@@ -30,7 +30,7 @@ if len(starting_files) == 0:
            formatter(".+/(?P<SAMPLE>.+)_combined_1\.fq\.gz$"),
            [f"{data_trimmed_dir}/{{SAMPLE[0]}}_trimmed_c_1.fq.gz",
             f"{data_trimmed_dir}/{{SAMPLE[0]}}_trimmed_c_2.fq.gz"])
-def trim_cutadapt(infiles, outfiles):
+def trim_adapters_cutadapt(infiles, outfiles):
     infile_r1, infile_r2 = infiles
     outfile_r1, outfile_r2 = outfiles
     statement = f"""cutadapt \
@@ -43,7 +43,7 @@ def trim_cutadapt(infiles, outfiles):
                 {infile_r1} {infile_r2}"""
     P.run(statement, job_memory="16G", job_threads=2)
 
-@transform(trim_cutadapt,
+@transform(trim_adapters_cutadapt,
            regex(r".+/(.+)_trimmed_c_1\.fq\.gz$"),
            [rf"{data_trimmed_dir}/\1_trimmed_c_t.fq.gz",
             rf"{data_trimmed_dir}/\1_trimmed_c_t_1_unpaired.fq.gz",

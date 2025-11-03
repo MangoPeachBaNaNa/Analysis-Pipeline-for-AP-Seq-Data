@@ -32,8 +32,11 @@ def map_sequence(input_files, output_file):
     job_options = "-t 96:00:00"
     sample_name = os.path.basename(r1).replace("-1A_final_1.fq.gz", "")
     statement = f"""module load samtools &&
-                bwa mem -t {threads} {reference_dir}/mm10_all {r1} {r2} | \
-                samtools view -bS - > {output_file} """
+                bwa mem -t {threads} -M {reference_dir}/mm10_all {r1} {r2} | \
+                samtools view -bS -F 256 -q 30 > {output_file} """
+    
+
+
     print(f"Running BWA mapping for {sample_name}")
     P.run(statement, job_memory="8G", job_threads=threads)
 
