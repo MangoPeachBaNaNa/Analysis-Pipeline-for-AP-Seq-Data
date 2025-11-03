@@ -1,7 +1,10 @@
 """
 :Author: Naici_G
 :Date: 27 Oct 2025
-:Description: Convert BAM files with marked duplicates to BigWig format.
+:Description: Compute group matrix from log2-ratio bigwig files for specific genes (i.e.,FOS) using computeMatrix from deepTools.
+
+:Starting files: all *.log2ratio.bw files in the working directory.
+:Output files: {gene}.matrix.gz, {gene}.tab, {gene}.bed
 """
 from ruffus import *
 from cgatcore import pipeline as P
@@ -15,7 +18,7 @@ INDIVIDUAL_BW_FILES = glob.glob("*.log2ratio.bw")
          regex(r".*"), 
          [f"{GENE}.matrix.gz",
           f"{GENE}.tab",
-          "FOS_gene.bed"])
+          f"{GENE}.bed"])
 def compute_group_matrix_gene_FOS(infiles, outfiles):
     threads = 4
     input_strings = " ".join(infiles)

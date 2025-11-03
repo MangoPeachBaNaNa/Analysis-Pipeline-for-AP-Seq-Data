@@ -1,7 +1,10 @@
 """
 :Author: Naici_G
 :Date: 27 Oct 2025
-:Description: Convert BAM files with marked duplicates to BigWig format.
+:Description: Convert BAM files with marked duplicates to BigWig format, normalize using RPGC, then compute log2 ratio bigwig files for PD vs IN samples.
+
+:Input files: All *.marked.sorted.bam files in the working directory.
+:Output files: Corresponding .RPGC.bw and _log2ratio.bw files for each sample.
 """
 # import modules
 from ruffus import *
@@ -62,31 +65,7 @@ def compute_matrix(infile, outfiles):
                 --outFileSortedRegions {outfile_sorted_regions} '''
     P.run(statement, job_memory="4G", job_threads=threads)
 """ 
-# Compute matrix for all replicates combined - group matrix
-# This is for TSS +/- 3kb
-INDIVIDUAL_BW_FILES = glob.glob("*.log2ratio.bw")
-@collate(INDIVIDUAL_BW_FILES,
-         regex(r".*"), 
-         ["all_replicates_combined.matrix.gz",
-          "all_replicates_combined.tab",
-          "all_replicates_combined.bed"])
-def compute_group_matrix(infiles, outfiles):
-    threads = 4
-    input_strings = " ".join(infiles)
-    outfile_matrix, outfile_name_matrix, outfile_sorted_regions = outfiles
-    statement = f"""computeMatrix reference-point \
-                --referencePoint TSS \
-                -b 3000 -a 3000 \
-                -R mm10_TSS.bed \
-                -S {input_strings} \
-                -o {outfile_matrix} \
-                -p {threads} \
-                --outFileNameMatrix {outfile_name_matrix} \
-                --outFileSortedRegions {outfile_sorted_regions} """
-    P.run(statement, job_memory="4G", job_threads=threads)
-
-# plotProfile -m all_replicates_combined.matrix.gz -o all_replicates_profile.png --numPlotsPerRow 2
-@follows(compute_group_matrix)
+@follows(bw_to_log2ratio)
 def full():
     pass
 def main(argv=None):

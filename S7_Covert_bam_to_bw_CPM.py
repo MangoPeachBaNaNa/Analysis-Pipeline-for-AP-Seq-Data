@@ -1,7 +1,10 @@
 """
 :Author: Naici_G
 :Date: 28 Oct 2025
-:Description: Convert BAM files with marked duplicates to BigWig format.
+:Description: Convert BAM files to BigWig files using bamcompare for PD vs IN samples, normalize using CPM, and compute log2 ratio.
+
+:Input files: All *_PD.marked.sorted.bam and corresponding *_IN.marked.sorted.bam files in the working directory.
+:Output files: Corresponding .PDvsIN.log2.bw files for each sample.
 """
 # import modules
 from ruffus import *
@@ -13,7 +16,8 @@ import os
 PD_files = glob.glob("*_PD.marked.sorted.bam")
 starting_files = [(file, file.replace("_PD.marked.sorted.bam", "_IN.marked.sorted.bam")) for file in PD_files]
 
-# convert BAM to BigWig using bamcompare
+# convert BAM to BigWig using bamcompare 
+# normalize using CPM and log2 operation
 @transform(starting_files,
            formatter("(?P<SAMPLE>.+)_PD.marked.sorted.bam"),
            f"{{SAMPLE[0]}}.PDvsIN.log2.bw")
