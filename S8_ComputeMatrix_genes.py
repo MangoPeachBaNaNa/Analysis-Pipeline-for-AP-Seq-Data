@@ -15,9 +15,9 @@ import os
 # There are three specific genes we are interested in
 # FOS, SRF & CCN2
 GENE = "FOS"
-INDIVIDUAL_BW_FILES = glob.glob("*.log2ratio.bw")
-@collate(INDIVIDUAL_BW_FILES,
-         regex(r".*"), 
+INDIVIDUAL_BW_FILES = glob.glob("*_log2ratio.bw")
+# shouldn't use collate but merge here
+@merge(INDIVIDUAL_BW_FILES,
          [f"{GENE}.matrix.gz",
           f"{GENE}.tab",
           f"{GENE}.bed"])
