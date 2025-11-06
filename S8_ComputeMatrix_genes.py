@@ -23,7 +23,7 @@ INDIVIDUAL_BW_FILES = glob.glob("*_log2ratio.bw")
           f"{GENE}.bed"])
 
 # gene is not the same with TSS - shouldn't be using reference-point center?
-def compute_group_matrix_gene_FOS(infiles, outfiles):
+def compute_group_matrix_gene(infiles, outfiles):
     threads = 4
     input_strings = " ".join(infiles)
     outfile_matrix, outfile_name_matrix, outfile_sorted_regions = outfiles
@@ -39,7 +39,7 @@ def compute_group_matrix_gene_FOS(infiles, outfiles):
                 --outFileSortedRegions {outfile_sorted_regions} """
     P.run(statement, job_memory="4G", job_threads=threads)
 
-@follows(compute_group_matrix_gene_FOS)
+@follows(compute_group_matrix_gene)
 def full():
     pass
 def main(argv=None):

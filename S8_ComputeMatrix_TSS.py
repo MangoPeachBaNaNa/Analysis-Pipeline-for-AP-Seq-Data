@@ -14,9 +14,8 @@ import sys
 import os
 
 # compute group matrix from log2-ratio bigwig files
-INDIVIDUAL_BW_FILES = glob.glob("*.log2ratio.bw")
-@collate(INDIVIDUAL_BW_FILES,
-         regex(r".*"), 
+INDIVIDUAL_BW_FILES = glob.glob("*_log2ratio.bw")
+@merge(INDIVIDUAL_BW_FILES,
          ["all_replicates_combined.matrix.gz",
           "all_replicates_combined.tab",
           "all_replicates_combined.bed"])
@@ -36,6 +35,7 @@ def compute_group_matrix(infiles, outfiles):
     P.run(statement, job_memory="4G", job_threads=threads)
 
 # plotProfile -m all_replicates_combined.matrix.gz -o all_replicates_profile.png --numPlotsPerRow 2
+# plotProfile -m TSS.matrix.gz -o TSS.png --numPlotsPerRow 2 --colors black blue black blue black blue black blue
 @follows(compute_group_matrix)
 def full():
     pass
